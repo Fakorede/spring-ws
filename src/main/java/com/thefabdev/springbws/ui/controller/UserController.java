@@ -1,6 +1,7 @@
 package com.thefabdev.springbws.ui.controller;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thefabdev.springbws.service.UserService;
 import com.thefabdev.springbws.shared.dto.UserDto;
 import com.thefabdev.springbws.ui.model.request.UserDetailsRequestModel;
 import com.thefabdev.springbws.ui.model.response.UserResponse;
@@ -17,6 +19,9 @@ import com.thefabdev.springbws.ui.model.response.UserResponse;
 @RequestMapping("/users")
 public class UserController {
 	
+	@Autowired
+	UserService userService;
+	
 	@GetMapping
 	public String getUser() {
 		return "get user bbb";
@@ -24,7 +29,16 @@ public class UserController {
 	
 	@PostMapping
 	public UserResponse createUser(@RequestBody UserDetailsRequestModel requestDetails) {
-		return null;
+		UserResponse response = new UserResponse();
+		UserDto userDto = new UserDto();
+		
+		BeanUtils.copyProperties(requestDetails, userDto);
+		
+		UserDto newUser = userService.createUser(userDto);
+		
+		BeanUtils.copyProperties(newUser, response);
+		
+		return response;
 	}
 	
 	@PutMapping
